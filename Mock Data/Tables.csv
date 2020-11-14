@@ -1,0 +1,10 @@
+Center,TRUE,9
+Center,FALSE,9
+Left Upper Corner ,FALSE,10
+Left Upper Corner ,TRUE,10
+Right Lower Corner,FALSE,11
+Center,FALSE,12
+Right Upper Corner,TRUE,13
+Left Lower Corner,TRUE,14
+Right Upper Corner,FALSE,15
+Left Lower Corner,TRUE,16
