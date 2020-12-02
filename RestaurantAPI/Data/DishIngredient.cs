@@ -83,7 +83,7 @@ namespace RestaurantAPI.Data
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("dish_ingredient_id", NpgsqlDbType.Integer));
-                    cmd.Parameters.Add(new NpgsqlParameter("Ing_Name", NpgsqlDbType.Double));
+                    cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Varchar));
                     cmd.Parameters[0].Value = Dish_Ingredient.Dish_ID;
                     cmd.Parameters[1].Value = Dish_Ingredient.Ing_Name;
                     await sql.OpenAsync();
@@ -101,7 +101,7 @@ namespace RestaurantAPI.Data
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("dish_ingredient_id", NpgsqlDbType.Integer));
-                    cmd.Parameters.Add(new NpgsqlParameter("Ing_Name", NpgsqlDbType.Double));
+                    cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Double));
                     cmd.Parameters[0].Value = Dish_Ingredient.Dish_ID;
                     cmd.Parameters[1].Value = Dish_Ingredient.Ing_Name;
                     await sql.OpenAsync();

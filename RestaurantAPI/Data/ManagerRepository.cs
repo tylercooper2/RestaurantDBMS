@@ -126,6 +126,29 @@ namespace RestaurantAPI.Data
                 }
             }
         }
+
+        public async Task<List<Manager>> GetNumberManagers()
+        {
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetNumberManagers\"", sql))
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    var response = new List<Manager>();
+                    await sql.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            response.Add(MapToValue(reader));
+                        }
+                    }
+
+                    return response;
+                }
+            }
+        }
     }
 }
 
