@@ -1,13 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantAPI.Models
 {
-    public class Cook
+    public class Cook                               // Entity
     {   
-        [Key]
-        public int User_ID{ get; set; }
-        public string Specialty { get; set;}
-        public string Type { get; set; }
+        [Required][Key]
+        public int User_ID{ get; set; }             // Unique Cook identifier
+        public string Specialty { get; set;}        // Cook's Specialty
+        public string Type { get; set; }            // The type of Cook (Part time or Full time)
     }
 }
