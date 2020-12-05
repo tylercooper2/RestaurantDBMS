@@ -17,16 +17,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Ingredient records in the database
         public async Task<List<Ingredient>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_GetAll\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Ingredient>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -40,22 +42,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        private Ingredient MapToValue(NpgsqlDataReader reader)
-        {
-            return new Ingredient()
-            {
-                Name = reader["Name"].ToString(),
-                Price =  (decimal)reader["Price"],
-                Exp_Date = (DateTime)reader["Exp_Date"],
-                Quantity = (decimal)reader["Quantity"]
-            };
-        }
-
+        // Function returns the Ingredient with the specified ing_name from the database
         public async Task<Ingredient> GetByName(string ing_name)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_GetByName\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_GetByName\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Varchar));
@@ -63,6 +55,7 @@ namespace RestaurantAPI.Data
                     Ingredient response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -76,11 +69,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts an Ingredient record in the database
         public async Task Insert(Ingredient ingredient)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_InsertValue\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Varchar));
@@ -98,11 +92,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies an Ingredient record in the database
         public async Task ModifyByName(Ingredient ingredient)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_ModifyByName\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_ModifyByName\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Varchar));
@@ -120,11 +115,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes an Ingredient record in the database
         public async Task DeleteByName(string ing_name)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_DeleteByName\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spIngredient_DeleteByName\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("ing_name", NpgsqlDbType.Varchar));
@@ -134,6 +130,18 @@ namespace RestaurantAPI.Data
                     return;
                 }
             }
+        }
+
+        // Mapper used to map between the reader object and our Ingredients model
+        private Ingredient MapToValue(NpgsqlDataReader reader)
+        {
+            return new Ingredient()
+            {
+                Name = reader["Name"].ToString(),
+                Price = (decimal)reader["Price"],
+                Exp_Date = (DateTime)reader["Exp_Date"],
+                Quantity = (decimal)reader["Quantity"]
+            };
         }
     }
 }

@@ -16,16 +16,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Customer_Transaction records in the database
         public async Task<List<Customer_Transaction>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_GetAll\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Customer_Transaction>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -39,20 +41,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        private Customer_Transaction MapToValue(NpgsqlDataReader reader)
-        {
-            return new Customer_Transaction()
-            {
-                User_ID = (int)reader["User_ID"],
-                Transaction_ID = (int)reader["Transaction_ID"],
-            };
-        }
-
+        // Function returns the Customer_Transaction with the specified user_id and transaction_id from the database
         public async Task<Customer_Transaction> GetById(int user_id, int tran_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_GetById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -62,6 +56,7 @@ namespace RestaurantAPI.Data
                     Customer_Transaction response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -75,11 +70,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts a Customer_Transaction record in the database
         public async Task Insert(Customer_Transaction customer_transaction)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_InsertValue\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -93,11 +89,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes a Customer_Transaction record in the database
         public async Task DeleteById(int user_id, int tran_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCustomer_Transaction_DeleteById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -109,6 +106,16 @@ namespace RestaurantAPI.Data
                     return;
                 }
             }
+        }
+
+        // Mapper used to map between the reader object and our Customer_Transaction model
+        private Customer_Transaction MapToValue(NpgsqlDataReader reader)
+        {
+            return new Customer_Transaction()
+            {
+                User_ID = (int)reader["User_ID"],
+                Transaction_ID = (int)reader["Transaction_ID"],
+            };
         }
     }
 }

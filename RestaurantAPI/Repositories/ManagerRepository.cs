@@ -15,19 +15,21 @@ namespace RestaurantAPI.Data
 
         public ManagerRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("Connection");
+            _connectionString = configuration.GetConnectionString("Connection");    
         }
 
+        // Function returns all Manager records in the database
         public async Task<List<Manager>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetAll\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     var response = new List<Manager>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -41,11 +43,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the Manager with the specified id from the database
         public async Task<Manager> GetById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -53,6 +56,7 @@ namespace RestaurantAPI.Data
                     Manager response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -66,12 +70,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        
+        // Function inserts a Manager record in the database
         public async Task Insert(Manager manager)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_InsertValue\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -84,12 +88,14 @@ namespace RestaurantAPI.Data
                 }
             }
         }
-        
+
+
+        // Function modifies a Managers record in the database
         public async Task ModifyById(Manager manager)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_ModifyById\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -103,12 +109,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        
+        // Function deletes a Manager record in the database
         public async Task DeleteById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_DeleteById\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -120,12 +126,13 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Functionn returns the number of manager in the database
         public async Task<int> getManagerNum()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetNumberManagers\"", sql))
-                {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spManager_GetNumberManagers\"", sql))   // Specifying stored procedure
+                {   
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("num_of_managers", NpgsqlDbType.Integer) { Direction = ParameterDirection.Output });
                     await sql.OpenAsync();
@@ -135,6 +142,7 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Mapper used to map between the reader object and our Manager model
         private Manager MapToValue(NpgsqlDataReader reader)
         {
             return new Manager()

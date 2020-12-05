@@ -17,17 +17,19 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all User records in the database
         public async Task<List<User>> GetAll()
         {
-            using(NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using(NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_GetAll\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     var response = new List<User>();
                     await sql.OpenAsync();
 
-                    using( var reader = await cmd.ExecuteReaderAsync())
+                    // Parsing the data retrieved from the database
+                    using ( var reader = await cmd.ExecuteReaderAsync())
                     {
                         while(await reader.ReadAsync())
                         {
@@ -40,17 +42,19 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the User with the specified id from the database
         public async Task<User> GetById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_GetById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter<int> ("id", NpgsqlTypes.NpgsqlDbType.Integer) { TypedValue = id});
                     User response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -64,11 +68,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts a User record in the database
         public async Task Insert(User user)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_InsertValue\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter<string>("username", NpgsqlTypes.NpgsqlDbType.Varchar) { TypedValue = user.Username});
@@ -91,11 +96,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies a User record in the database
         public async Task ModifyById(User user)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_ModifyById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter<int>("id", NpgsqlTypes.NpgsqlDbType.Integer) { TypedValue = user.ID });
@@ -120,11 +126,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes a User record in the database
         public async Task DeleteById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_DeleteById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter<int>("id", NpgsqlTypes.NpgsqlDbType.Integer) { TypedValue = id});
@@ -135,6 +142,24 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the user_id of the last inserted user
+        public async Task<int> getLastInsertedID()
+        {
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_LastInserted\"", sql))   // Specifying stored procedure
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new NpgsqlParameter("cur_user_id", NpgsqlTypes.NpgsqlDbType.Integer) { Direction = ParameterDirection.Output });
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    return Convert.ToInt32(cmd.Parameters[0].Value);
+                    
+                }
+            }
+        }
+
+        // Mapper used to map between the reader object and our User model
         private User MapToValue(NpgsqlDataReader reader)
         {
             return new User()
@@ -155,22 +180,6 @@ namespace RestaurantAPI.Data
                 DOB = (DateTime)reader["DOB"],
                 Email = reader["Email"].ToString(),
             };
-        }
-
-        public async Task<int> getLastInsertedID()
-        {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
-            {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spUser_LastInserted\"", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new NpgsqlParameter("cur_user_id", NpgsqlTypes.NpgsqlDbType.Integer) { Direction = ParameterDirection.Output });
-                    await sql.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync();
-                    return Convert.ToInt32(cmd.Parameters[0].Value);
-                    
-                }
-            }
         }
     }
 }

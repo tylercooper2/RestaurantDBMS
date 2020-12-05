@@ -16,12 +16,13 @@ namespace RestaurantAPI.Data
         {
             _connectionString = configuration.GetConnectionString("Connection");
         }
-    
+
+        // Function returns all Menu records in the database
         public async Task<List<Menu>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetAll\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Menu>();
@@ -40,12 +41,13 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the Menu with the specified type from the database
         public async Task<Menu> GetByType(string type)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetByType\"", sql))
-                {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetByType\"", sql))   // Specifying stored procedure
+                {   
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Varchar));
                     cmd.Parameters[0].Value = type;
@@ -65,11 +67,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts a Menu record in the database
         public async Task Insert(Menu menu)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_InsertValue\"", sql))     // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Varchar));
@@ -83,11 +86,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies a Menu record in the database
         public async Task ModifyByType(Menu menu)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_ModifyByType\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_ModifyByType\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Varchar));
@@ -101,11 +105,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes a Menu record in the database
         public async Task DeleteByType(string type)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_DeleteByType\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_DeleteByType\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Varchar));
@@ -117,11 +122,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function gets all dishes included in a menu
         public async Task<List<Dish>> getDishes(string type)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetDishes\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetDishes\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Varchar) { Direction = System.Data.ParameterDirection.Input });
@@ -142,6 +148,32 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function gets all the available menus
+        public async Task<List<Menu>> getAvailable()
+        {
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spMenu_GetAvailable\"", sql))    // Specifying stored procedure
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    var response = new List<Menu>();
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            response.Add(MapToValue(reader));
+                        }
+                    }
+
+                    return response;
+                }
+            }
+        }
+
+        // Mapper used to map between the reader object and our Menus model
         private Menu MapToValue(NpgsqlDataReader reader)
         {
             return new Menu()
@@ -151,6 +183,7 @@ namespace RestaurantAPI.Data
             };
         }
 
+        // Mapper used to map between the reader object and our Dish model
         private Dish MapToDish(NpgsqlDataReader reader)
         {
             return new Dish()

@@ -17,16 +17,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Reviews records in the database
         public async Task<List<Review>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_GetAll\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Review>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -40,29 +42,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        private Review MapToValue(NpgsqlDataReader reader)
-        {
-            int? t = null;
-            if (!Convert.IsDBNull(reader["Dish_ID"]))
-            {
-                t = (int?)reader["Dish_ID"];
-            }
-
-            return new Review()
-            {
-                User_ID = (int)reader["User_ID"],
-                Review_ID = (int)reader["Review_ID"],
-                Description = reader["Description"].ToString(),
-                Rating = (int)reader["Rating"],
-                Dish_ID = t
-            };
-        }
-
+        // Function returns the Review with the specified by a user_id and review_id from the database
         public async Task<Review> GetById(int user_id, int review_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_GetById\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -72,6 +57,7 @@ namespace RestaurantAPI.Data
                     Review response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -85,11 +71,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts a Review record in the database
         public async Task Insert(Review review)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_InsertValue\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -108,11 +95,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies a Review record in the database
         public async Task ModifyById(Review review)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_ModifyById\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -133,11 +121,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes a Review record in the database
         public async Task DeleteById(int user_id, int review_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_DeleteById\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -149,6 +138,25 @@ namespace RestaurantAPI.Data
                     return;
                 }
             }
+        }
+
+        // Mapper used to map between the reader object and our Review model
+        private Review MapToValue(NpgsqlDataReader reader)
+        {
+            int? t = null;
+            if (!Convert.IsDBNull(reader["Dish_ID"]))
+            {
+                t = (int?)reader["Dish_ID"];
+            }
+
+            return new Review()
+            {
+                User_ID = (int)reader["User_ID"],
+                Review_ID = (int)reader["Review_ID"],
+                Description = reader["Description"].ToString(),
+                Rating = (int)reader["Rating"],
+                Dish_ID = t
+            };
         }
     }
 }

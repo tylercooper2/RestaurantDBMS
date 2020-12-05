@@ -17,16 +17,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Order_Dish records in the database
         public async Task<List<Order_Dish>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetAll\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Order_Dish>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -40,20 +42,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        private Order_Dish MapToValue(NpgsqlDataReader reader)
-        {
-            return new Order_Dish()
-            {
-                Dish_ID = (int)reader["Dish_ID"],
-                Order_ID = (int)reader["Order_ID"],
-            };
-        }
-
+        // Function returns the Order with the specified order_id and dish_id from the database
         public async Task<Order_Dish> GetById(int order_id, int dish_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetById\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("order_id", NpgsqlDbType.Integer));
@@ -63,6 +57,7 @@ namespace RestaurantAPI.Data
                     Order_Dish response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -76,11 +71,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts an Order_Dish record in the database
         public async Task Insert(Order_Dish order_dish)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_InsertValue\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("order_id", NpgsqlDbType.Integer));
@@ -94,11 +90,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes an Order_Dish record in the database
         public async Task DeleteById(int order_id, int dish_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_DeleteById\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("order_id", NpgsqlDbType.Integer));
@@ -112,11 +109,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the number of dishes in a specified order
         public async Task<int> getNumberOfDishes(int order_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_getNumberOfDishes\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_getNumberOfDishes\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("order_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
@@ -129,11 +127,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the orders that contain a certain dish
         public async Task<List<Order>> getOrderList(int dish_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))   // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetOrderList\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spOrder_Dish_GetOrderList\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("dish_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
@@ -141,6 +140,7 @@ namespace RestaurantAPI.Data
                     var response = new List<Order>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -151,6 +151,16 @@ namespace RestaurantAPI.Data
                     return response;
                 }
             }
+        }
+
+        // Mapper used to map between the reader object and our Order_Dish model
+        private Order_Dish MapToValue(NpgsqlDataReader reader)
+        {
+            return new Order_Dish()
+            {
+                Dish_ID = (int)reader["Dish_ID"],
+                Order_ID = (int)reader["Order_ID"],
+            };
         }
     }
 }

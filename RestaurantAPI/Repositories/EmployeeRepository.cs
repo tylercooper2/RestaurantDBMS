@@ -17,16 +17,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Employee records in the database
         public async Task<List<Employee>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetAll\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Employee>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -40,11 +42,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the Employee with the specified user_id from the database
         public async Task<Employee> GetById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Integer));
@@ -52,6 +55,7 @@ namespace RestaurantAPI.Data
                     Employee response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -65,12 +69,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        
+        // Function inserts an Employee record in the database
         public async Task Insert(Employee employee)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_InsertValue\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -91,11 +95,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies an Employee record in the database
         public async Task ModifyById(Employee employee)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_ModifyById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -115,11 +120,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes an Emplooyee record in the database
         public async Task DeleteById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_DeleteById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -131,12 +137,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-
+        // Function returns all employees managed by a specified manager
         public async Task<List<Employee>> getManagedBy(int manager_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetManagedBy\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spEmployee_GetManagedBy\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("manager_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
@@ -144,6 +150,7 @@ namespace RestaurantAPI.Data
                     var response = new List<Employee>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -157,6 +164,7 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Mapper used to map between the reader object and our Employee model
         private Employee MapToValue(NpgsqlDataReader reader)
         {
 

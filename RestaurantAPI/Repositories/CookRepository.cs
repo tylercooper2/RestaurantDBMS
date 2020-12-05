@@ -16,17 +16,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
-        
+        // Function returns all Cook records in the database
         public async Task<List<Cook>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString)) // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_GetAll\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Cook>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -40,22 +41,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        private Cook MapToValue(NpgsqlDataReader reader)
-        {
-            return new Cook()
-            {
-                User_ID = (int)reader["User_ID"],
-                Specialty = reader["Specialty"].ToString(),
-                Type = reader["Type"].ToString()
-
-            };
-        }
-
+        // Function returns the Cook with the specified id from the database
         public async Task<Cook> GetById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_GetById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Integer));
@@ -63,6 +54,7 @@ namespace RestaurantAPI.Data
                     Cook response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -76,12 +68,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        
+        // Function inserts a cook record in the database
         public async Task Insert(Cook cook)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_InsertValue\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -97,12 +89,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-        
+        // Function modifies a cook record in the database
         public async Task ModifyById(Cook cook)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_ModifyById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -118,12 +110,12 @@ namespace RestaurantAPI.Data
             }
         }
 
-
+        // Function deletes a cook record in the database
         public async Task DeleteById(int id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spCook_DeleteById\"", sql)) // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
@@ -133,6 +125,18 @@ namespace RestaurantAPI.Data
                     return;
                 }
             }
+        }
+
+        // Mapper used to map between the reader object and our Cook model
+        private Cook MapToValue(NpgsqlDataReader reader)
+        {
+            return new Cook()
+            {
+                User_ID = (int)reader["User_ID"],
+                Specialty = reader["Specialty"].ToString(),
+                Type = reader["Type"].ToString()
+
+            };
         }
     }
 }

@@ -16,16 +16,18 @@ namespace RestaurantAPI.Data
             _connectionString = configuration.GetConnectionString("Connection");
         }
 
+        // Function returns all Table records in the database
         public async Task<List<Table>> GetAll()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetAll\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetAll\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Table>();
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -39,11 +41,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the Table with the specified tableno from the database
         public async Task<Table> GetById(int tableno)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetById\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("tableno", NpgsqlDbType.Integer));
@@ -51,6 +54,7 @@ namespace RestaurantAPI.Data
                     Table response = null;
                     await sql.OpenAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -64,11 +68,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function inserts a Table record in the database
         public async Task Insert(Table table)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_InsertValue\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_InsertValue\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("location",NpgsqlDbType.Varchar));
@@ -84,11 +89,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function modifies a Table record in the database
         public async Task ModifyById(Table table)
-        {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+        {   
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_ModifyById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_ModifyById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("tableno", NpgsqlDbType.Integer));
@@ -106,11 +112,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function deletes a Table record in the database
         public async Task DeleteById(int tableno)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_DeleteById\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_DeleteById\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("tableno", NpgsqlDbType.Integer));
@@ -122,18 +129,20 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns Tables waited by a waiter/waitress
         public async Task<List<Table>> getWaitedBy(int waiter_id)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetWaitedBy\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetWaitedBy\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("waiter_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
                     cmd.Parameters[0].Value = waiter_id;
                     var response = new List<Table>();
                     await sql.OpenAsync();
-                   
+
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -147,11 +156,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function make the availability of a tale false
         public async Task makeOcuppied(int tableno)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_MakeOccupied\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_MakeOccupied\"", sql))  // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("tableno", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
@@ -163,11 +173,12 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function makes the availability of a table trues
         public async Task makeDisoccupied(int? tableno)
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_MakeDisoccupied\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_MakeDisoccupied\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("tableno", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
@@ -179,17 +190,19 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns all occupied tables
         public async Task<List<Table>> getOccupied()
         {
-            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetOccupied\"", sql))
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spTable_GetOccupied\"", sql))   // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     var response = new List<Table>();
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
 
+                    // Parsing the data retrieved from the database
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -203,6 +216,7 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Mapper used to map between the reader object and our Table model
         private Table MapToValue(NpgsqlDataReader reader)
         {
             return new Table()
