@@ -63,7 +63,7 @@ namespace RestaurantAPI.Controllers
         }
 
         // POST api/dish/potato
-        [HttpPost("{potato}")]
+        [HttpPost("{ing_name}")]
         public async Task<ActionResult> Post([FromBody] Dish dish, string ing_name)
         {
             // Converting ingredient name to title case (for convention)

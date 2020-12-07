@@ -140,6 +140,25 @@ namespace RestaurantAPI.Data
             }
         }
 
+        // Function returns the next review id (in order to keep Review as a weak entity)
+        public async Task<int> getNextReviewID(int user_id)
+        {
+            using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying the database context
+            {
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spReview_getNextReviewID\"", sql))   // Specifying stored procedure
+                {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Input });
+                    cmd.Parameters[0].Value = user_id;
+                    cmd.Parameters.Add(new NpgsqlParameter("next_review_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Output });
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    if (Convert.IsDBNull(cmd.Parameters[1].Value)) return 1;
+                    else return Convert.ToInt32(cmd.Parameters[1].Value);
+                }
+            }
+        }
+
         // Mapper used to map between the reader object and our Review model
         private Review MapToValue(NpgsqlDataReader reader)
         {

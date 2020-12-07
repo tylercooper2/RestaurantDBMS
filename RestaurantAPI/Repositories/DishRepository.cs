@@ -141,7 +141,7 @@ namespace RestaurantAPI.Data
         {   
             using (NpgsqlConnection sql = new NpgsqlConnection(_connectionString))  // Specifying database context
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spDish_GetLastInserted\"", sql))    // Specifying stored procedure
+                using (NpgsqlCommand cmd = new NpgsqlCommand("\"spDish_LastInserted\"", sql))    // Specifying stored procedure
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("cur_dish_id", NpgsqlDbType.Integer) { Direction = System.Data.ParameterDirection.Output });
