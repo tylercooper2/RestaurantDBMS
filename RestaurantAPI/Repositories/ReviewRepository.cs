@@ -80,14 +80,16 @@ namespace RestaurantAPI.Data
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Integer));
+                    cmd.Parameters.Add(new NpgsqlParameter("review_id", NpgsqlDbType.Integer));
                     cmd.Parameters.Add(new NpgsqlParameter("description", NpgsqlDbType.Varchar));
                     cmd.Parameters.Add(new NpgsqlParameter("rating", NpgsqlDbType.Integer));
                     cmd.Parameters.Add(new NpgsqlParameter("dish_id", NpgsqlDbType.Integer));
                     cmd.Parameters[0].Value = review.User_ID;
-                    cmd.Parameters[1].Value = review.Description;
-                    cmd.Parameters[2].Value = review.Rating;
+                    cmd.Parameters[1].Value = review.Review_ID;
+                    cmd.Parameters[2].Value = review.Description;
+                    cmd.Parameters[3].Value = review.Rating;
                     if (review.Dish_ID == null) cmd.Parameters[4].Value = DBNull.Value;
-                    else cmd.Parameters[3].Value = review.Dish_ID;
+                    else cmd.Parameters[4].Value = review.Dish_ID;
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
                     return;
