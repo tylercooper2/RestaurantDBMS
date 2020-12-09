@@ -46,7 +46,7 @@ namespace RestaurantAPI.Controllers
             catch
             {
                 // Unknown error
-                return NotFound("Record you are searching for does not exist");
+                return NotFound("Review record you are searching for does not exist or the URL is wrong");
             }
         }
 
@@ -64,7 +64,7 @@ namespace RestaurantAPI.Controllers
 
                 // Inserting record in the Review table
                 await _repository.Insert(review);
-                return Ok("Record inserted successfully\n");
+                return Ok("Review record inserted successfully\n");
             }
             catch (Npgsql.PostgresException ex)
             {
@@ -102,13 +102,13 @@ namespace RestaurantAPI.Controllers
                 if (response == null)
                 {
                     // If record does not exists
-                    return NotFound("Record was not found\n");
+                    return NotFound("Review record was not found\n");
                 }
                 else
                 {
                     // If record was found modify it
                     await _repository.ModifyById(review);
-                    string format = "The record with key=({0},{1}) was updated succesfully\n";
+                    string format = "Review record with key=({0},{1}) was updated succesfully\n";
                     return Ok(String.Format(format, user_id, review_id));
                 }
 
@@ -121,7 +121,7 @@ namespace RestaurantAPI.Controllers
             catch
             {
                 // Unknown error
-                return BadRequest("Error: Record could not be updated\n");
+                return BadRequest("Error: Review record could not be updated\n");
             }
         }
 
@@ -136,7 +136,7 @@ namespace RestaurantAPI.Controllers
 
                 // Deleting record from Review table
                 await _repository.DeleteById(user_id, review_id);
-                string format = "Record with key=({0},{1}) deleted succesfully\n";
+                string format = "Review record with key=({0},{1}) deleted succesfully\n";
                 return Ok(string.Format(format, user_id, review_id));
             }
             catch (Npgsql.PostgresException ex)
@@ -147,7 +147,7 @@ namespace RestaurantAPI.Controllers
             catch
             {
                 // Unknown error
-                return BadRequest("Error: Record could not be deleted\n");
+                return BadRequest("Error: Review record could not be deleted\n");
             }
         }
     }
